@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bella Cucina AI Chatbot Demo - Marc Juchems Portfolio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .demo-container {
+      max-width: 1200px;
+      width: 100%;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+    }
+    
+    .demo-header {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+    
+    .demo-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    
+    .demo-header p {
+      font-size: 18px;
+      opacity: 0.95;
+      margin-bottom: 8px;
+    }
+    
+    .demo-header .subtitle {
+      font-size: 14px;
+      opacity: 0.85;
+      font-style: italic;
+    }
+    
+    .demo-content {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    
+    .info-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: #8B0000;
+      margin-bottom: 20px;
+    }
+    
+    .info-section h3 {
+      font-size: 18px;
+      color: #2C2C2C;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    
+    .info-section p, .info-section li {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    
+    .info-section ul {
+      margin-left: 20px;
+    }
+    
+    .feature-badge {
+      display: inline-block;
+      background: #FFF8F0;
+      border: 1px solid #8B0000;
+      color: #8B0000;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .instruction-box {
+      background: #FFF8F0;
+      border-left: 4px solid #8B0000;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .instruction-box h3 {
+      margin-top: 0;
+      color: #8B0000;
+    }
+    
+    .click-button {
+      background: #8B0000;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    
+    .chatbot-demo-area {
+      position: relative;
+      min-height: 600px;
+    }
+    
+    /* Chatbot Styles */
+    .chatbot-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    
+    .chat-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(139, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .chat-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .chat-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .chat-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(139, 0, 0, 0.5);
+    }
+    
+    .chat-button svg {
+      color: white;
+      z-index: 1;
+      transition: transform 0.3s;
+    }
+    
+    .chat-button:hover svg {
+      transform: scale(1.1);
+    }
+    
+    .chat-window {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 420px;
+      height: 600px;
+      background: #FFFEF7;
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      border: 1px solid rgba(139, 0, 0, 0.1);
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .chat-header {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .chat-header h3 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+    
+    .chat-header p {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      opacity: 0.95;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+    }
+    
+    .header-controls {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .lang-toggle, .close-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    .lang-toggle:hover, .close-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+    
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #FFFEF7;
+    }
+    
+    .message {
+      display: flex;
+      animation: messageSlide 0.3s ease-out;
+    }
+    
+    @keyframes messageSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .message.bot {
+      justify-content: flex-start;
+    }
+    
+    .message.user {
+      justify-content: flex-end;
+    }
+    
+    .message-bubble {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      line-height: 1.5;
+      font-size: 15px;
+      white-space: pre-line;
+    }
+    
+    .message.bot .message-bubble {
+      background: white;
+      color: #2C2C2C;
+      border: 1px solid #E8E8E8;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(139, 0, 0, 0.2);
+    }
+    
+    .input-container {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #E8E8E8;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid #E8E8E8;
+      border-radius: 24px;
+      font-size: 15px;
+      font-family: 'Montserrat', sans-serif;
+      outline: none;
+      transition: all 0.3s;
+      background: #FAFAFA;
+    }
+    
+    .chat-input:focus {
+      border-color: #8B0000;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.1);
+    }
+    
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+    }
+    
+    .send-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(139, 0, 0, 0.4);
+    }
+    
+    .send-btn svg {
+      color: white;
+    }
+    
+    @media (max-width: 1024px) {
+      .demo-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .chat-window {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 140px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1>🍝 Bella Cucina AI Chatbot</h1>
+      <p>Interactive Portfolio Demo - AI Implementation Project</p>
+      <p class="subtitle">Created by Marc Juchems</p>
+    </div>
+    
+    <div class="demo-content">
+      <div class="info-section">
+        <h2>About This Project</h2>
+        <p>This is a fully functional AI chatbot built for a mock client scenario: a small Italian restaurant seeking to improve customer service and operational efficiency through automation.</p>
+        
+        <div class="instruction-box">
+          <h3>👉 Try It Now!</h3>
+          <p>Click the <span class="click-button">💬 Chat Button</span> in the bottom-right corner to start interacting with the chatbot!</p>
+        </div>
+        
+        <h3>✨ Key Features Implemented</h3>
+        <div>
+          <span class="feature-badge">Bilingual (EN/ES)</span>
+          <span class="feature-badge">Menu Information</span>
+          <span class="feature-badge">Dietary Restrictions</span>
+          <span class="feature-badge">Daily Specials</span>
+          <span class="feature-badge">Hours & Location</span>
+          <span class="feature-badge">Email Capture</span>
+          <span class="feature-badge">Reservation Handoff</span>
+        </div>
+        
+        <h3>🎯 Business Problem Solved</h3>
+        <p>The restaurant faced:</p>
+        <ul>
+          <li>Overwhelmed phone lines during dinner rush</li>
+          <li>Staff time consumed answering repetitive questions</li>
+          <li>Inability to promote daily specials effectively</li>
+          <li>Language barriers with Spanish-speaking customers</li>
+          <li>Need for 24/7 customer service availability</li>
+        </ul>
+        
+        <h3>💡 Try These Example Queries</h3>
+        <p><strong>English:</strong></p>
+        <ul>
+          <li>"What pasta dishes do you have?"</li>
+          <li>"Do you have gluten-free options?"</li>
+          <li>"What are today's specials?"</li>
+          <li>"I'd like to make a reservation for 4"</li>
+          <li>"Where are you located?"</li>
+        </ul>
+        
+        <p><strong>Spanish (auto-switches language):</strong></p>
+        <ul>
+          <li>"Hola, ¿tienen opciones veganas?"</li>
+          <li>"¿Cuáles son los especiales?"</li>
+          <li>"Quisiera una reservación para 6"</li>
+        </ul>
+        
+        <h3>🛠️ Technical Implementation</h3>
+        <ul>
+          <li><strong>Framework:</strong> Pure JavaScript with DOM manipulation</li>
+          <li><strong>Language Detection:</strong> Automatic Spanish keyword recognition</li>
+          <li><strong>Conversation Flow:</strong> Multi-step reservation process with data collection</li>
+          <li><strong>UI/UX:</strong> Custom Italian restaurant branding, smooth animations</li>
+          <li><strong>Responsive Design:</strong> Works on desktop and mobile devices</li>
+        </ul>
+        
+        <h3>📊 Expected Business Impact</h3>
+        <ul>
+          <li>40-50% reduction in phone call volume</li>
+          <li>24/7 customer service availability</li>
+          <li>Staff freed to focus on in-person service</li>
+          <li>Improved customer satisfaction through instant responses</li>
+          <li>Email list growth for marketing campaigns</li>
+        </ul>
+      </div>
+      
+      <div class="chatbot-demo-area">
+        <div style="background: #FFF8F0; border-radius: 12px; padding: 30px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#8B0000" stroke-width="1.5" style="margin-bottom: 20px;">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="11" r="1" fill="#8B0000"></circle>
+            <circle cx="8" cy="11" r="1" fill="#8B0000"></circle>
+            <circle cx="16" cy="11" r="1" fill="#8B0000"></circle>
+          </svg>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #8B0000; margin-bottom: 12px;">Interactive Demo</h3>
+          <p style="color: #555; font-size: 16px; max-width: 300px; line-height: 1.6;">Click the chat button in the bottom-right corner to start a conversation with the Bella Cucina AI assistant!</p>
+          <p style="color: #8B0000; font-size: 14px; margin-top: 20px; font-weight: 600;">👇 Look for the red chat button below 👇</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chatbot-container" id="chatbot">
+    <button class="chat-button" id="openChat" aria-label="Open chat">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    // Chatbot Logic
+    let isOpen = false;
+    let messages = [];
+    let language = 'en';
+    let reservationData = {};
+    let emailCaptured = false;
+
+    const menuItems = {
+      en: {
+        pasta: "🍝 Our Pasta Selection:\n\n• Spaghetti Carbonara - Classic Roman style with pancetta, eggs, and pecorino ($18)\n• Fettuccine Alfredo - Creamy parmesan sauce ($16)\n• Lasagna Bolognese - Layers of pasta, meat sauce, and béchamel ($20)\n• Penne Arrabbiata - Spicy tomato sauce with garlic and chili ($15)\n• Ravioli Ricotta e Spinaci - Handmade ravioli with ricotta and spinach in butter sage sauce ($19)\n• Linguine alle Vongole - Fresh clams in white wine garlic sauce ($22)\n\nAll pasta dishes can be made with gluten-free pasta upon request!",
+        
+        seafood: "🦐 Fresh Seafood Options:\n\n• Linguine alle Vongole - Fresh clams in white wine garlic sauce ($22)\n• Grilled Atlantic Salmon - Served with roasted vegetables and lemon butter ($26)\n• Shrimp Scampi - Jumbo shrimp in garlic butter over linguine ($24)\n• Seafood Risotto - Arborio rice with shrimp, scallops, mussels, and saffron ($28)\n• Branzino al Forno - Whole roasted Mediterranean sea bass with herbs ($32)\n• Frutti di Mare - Mixed seafood pasta in tomato or white wine sauce ($29)\n\nAll seafood is sourced fresh daily from local markets!",
+        
+        vegan: "🌱 Vegan Menu:\n\n• Pasta Primavera - Fresh seasonal vegetables in olive oil and garlic ($16)\n• Spaghetti Aglio e Olio - Garlic, olive oil, chili flakes, and parsley ($14)\n• Bruschetta Classica - Toasted bread with tomatoes, basil, and garlic ($8)\n• Minestrone Soup - Hearty vegetable soup with beans ($9)\n• Garden Salad - Mixed greens with balsamic vinaigrette ($10)\n• Margherita Pizza (no cheese) - Fresh tomato sauce and basil ($14)\n• Caponata Siciliana - Sweet and sour eggplant with pine nuts ($12)\n\nWe use extra virgin olive oil and no animal products in these dishes!",
+        
+        glutenFree: "✨ Gluten-Free Options:\n\n• Any pasta dish can be made with our premium gluten-free pasta (add $2)\n• Gluten-free pizza crust available for all pizzas (add $3)\n• Grilled Salmon with roasted vegetables ($26)\n• Risotto dishes (Seafood, Mushroom, or Vegetarian)\n• All our salads and soups are naturally gluten-free\n• Gluten-free bread available upon request\n\nWe take cross-contamination seriously - please inform your server of any allergies!",
+        
+        vegetarian: "🥗 Vegetarian Selection:\n\n• Eggplant Parmesan - Breaded eggplant with marinara and mozzarella ($18)\n• Margherita Pizza - Fresh mozzarella, tomatoes, and basil ($16)\n• Mushroom Risotto - Creamy arborio rice with mixed mushrooms ($20)\n• Caprese Salad - Fresh mozzarella, tomatoes, and basil ($12)\n• Fettuccine Alfredo - Creamy parmesan sauce ($16)\n• Vegetable Lasagna - Layers of vegetables, ricotta, and marinara ($19)\n• Four Cheese Ravioli - In your choice of sauce ($18)\n\nAll pasta dishes can be customized to be vegetarian!",
+        
+        specials: "⭐ Today's Chef Specials:\n\n🍖 OSSO BUCO MILANESE\nBraised veal shank with saffron risotto and gremolata - $32\n\n🦞 LOBSTER RAVIOLI\nFresh Maine lobster ravioli in creamy tomato brandy sauce - $36\n\n🍰 COMPLIMENTARY TIRAMISU\nClassic Italian dessert with espresso and mascarpone - FREE with any entrée!\n\n🍷 WINE PAIRING SPECIAL\nGet 20% off any bottle of wine with your dinner\n\n💌 Want to get these specials delivered to your inbox weekly? Just share your email!"
+      },
+      es: {
+        pasta: "🍝 Nuestra Selección de Pasta:\n\n• Espagueti Carbonara - Estilo romano clásico con panceta, huevos y pecorino ($18)\n• Fettuccine Alfredo - Salsa cremosa de parmesano ($16)\n• Lasaña Boloñesa - Capas de pasta, salsa de carne y bechamel ($20)\n• Penne Arrabbiata - Salsa de tomate picante con ajo y chile ($15)\n• Ravioli de Ricotta y Espinaca - Ravioli caseros con ricotta y espinaca en salsa de mantequilla y salvia ($19)\n• Linguine alle Vongole - Almejas frescas en salsa de vino blanco y ajo ($22)\n\n¡Todos los platos de pasta pueden hacerse con pasta sin gluten bajo pedido!",
+        
+        seafood: "🦐 Opciones de Mariscos Frescos:\n\n• Linguine alle Vongole - Almejas frescas en salsa de vino blanco y ajo ($22)\n• Salmón del Atlántico a la Parrilla - Servido con vegetales asados y mantequilla de limón ($26)\n• Camarones al Ajillo - Camarones jumbo en mantequilla de ajo sobre linguine ($24)\n• Risotto de Mariscos - Arroz arborio con camarones, vieiras, mejillones y azafrán ($28)\n• Branzino al Horno - Lubina mediterránea entera asada con hierbas ($32)\n• Frutti di Mare - Pasta de mariscos mixtos en salsa de tomate o vino blanco ($29)\n\n¡Todos los mariscos se obtienen frescos diariamente de mercados locales!",
+        
+        vegan: "🌱 Menú Vegano:\n\n• Pasta Primavera - Vegetales frescos de temporada en aceite de oliva y ajo ($16)\n• Espagueti Aglio e Olio - Ajo, aceite de oliva, hojuelas de chile y perejil ($14)\n• Bruschetta Clásica - Pan tostado con tomates, albahaca y ajo ($8)\n• Sopa Minestrone - Sopa abundante de vegetales con frijoles ($9)\n• Ensalada de la Huerta - Mezcla de verdes con vinagreta balsámica ($10)\n• Pizza Margarita (sin queso) - Salsa de tomate fresca y albahaca ($14)\n• Caponata Siciliana - Berenjena agridulce con piñones ($12)\n\n¡Usamos aceite de oliva virgen extra y sin productos animales en estos platos!",
+        
+        glutenFree: "✨ Opciones Sin Gluten:\n\n• Cualquier plato de pasta puede hacerse con nuestra pasta premium sin gluten (agregar $2)\n• Masa de pizza sin gluten disponible para todas las pizzas (agregar $3)\n• Salmón a la parrilla con vegetales asados ($26)\n• Platos de risotto (Mariscos, Hongos o Vegetariano)\n• Todas nuestras ensaladas y sopas son naturalmente sin gluten\n• Pan sin gluten disponible bajo pedido\n\n¡Tomamos la contaminación cruzada en serio - por favor informe a su mesero de cualquier alergia!",
+        
+        vegetarian: "🥗 Selección Vegetariana:\n\n• Berenjena a la Parmesana - Berenjena empanizada con marinara y mozzarella ($18)\n• Pizza Margarita - Mozzarella fresca, tomates y albahaca ($16)\n• Risotto de Hongos - Arroz arborio cremoso con hongos mixtos ($20)\n• Ensalada Caprese - Mozzarella fresca, tomates y albahaca ($12)\n• Fettuccine Alfredo - Salsa cremosa de parmesano ($16)\n• Lasaña Vegetariana - Capas de vegetales, ricotta y marinara ($19)\n• Ravioli Cuatro Quesos - En su elección de salsa ($18)\n\n¡Todos los platos de pasta pueden personalizarse para ser vegetarianos!",
+        
+        specials: "⭐ Especiales del Chef de Hoy:\n\n🍖 OSSO BUCO MILANÉS\nJarrete de ternera estofado con risotto de azafrán y gremolata - $32\n\n🦞 RAVIOLI DE LANGOSTA\nRavioli de langosta fresca de Maine en salsa cremosa de tomate y brandy - $36\n\n🍰 TIRAMISÚ DE CORTESÍA\nPostre italiano clásico con espresso y mascarpone - ¡GRATIS con cualquier plato principal!\n\n🍷 ESPECIAL DE MARIDAJE DE VINO\nObtenga 20% de descuento en cualquier botella de vino con su cena\n\n💌 ¿Quieres recibir estos especiales en tu correo semanalmente? ¡Solo comparte tu email!"
+      }
+    };
+
+    const responses = {
+      en: {
+        hours: "⏰ Our Hours:\n\n📅 Tuesday - Thursday: 5:00 PM - 9:00 PM\n📅 Friday - Saturday: 5:00 PM - 10:00 PM\n📅 Sunday: 4:00 PM - 9:00 PM\n🚫 Closed Mondays\n\nHappy Hour: Tuesday-Friday 5-6:30 PM (half-price appetizers!)",
+        
+        location: "📍 Location & Parking:\n\nWe're located at:\n456 Main Street\nDowntown District\n\n🚗 Free parking available in the lot behind our building\n♿ Wheelchair accessible entrance on Main Street\n🚌 Bus routes 12, 15, and 20 stop right in front\n\nLooking forward to seeing you!",
+        
+        directions: "🗺️ Directions:\n\nFrom Highway 95:\n• Take Exit 12\n• Turn left onto Main Street\n• We're on the right after 3 blocks, next to City Hall\n\nFrom Downtown:\n• Head north on Main Street\n• We're between 4th and 5th Avenue\n\nLandmark: Right next to the historic City Hall building with the clock tower!",
+        
+        reservation: "📅 I'd be happy to help you make a reservation!\n\nLet me collect some information and I'll connect you with our staff to finalize your booking. They'll call you within 15 minutes to confirm.",
+        
+        thanks: "You're very welcome! 😊\n\nIs there anything else I can help you with today?\n\n• Menu questions\n• Hours & location\n• Make a reservation\n• Today's specials",
+        
+        goodbye: "Thank you for chatting with Bella Cucina! 🍝\n\nWe look forward to serving you soon.\n\nArrivederci! 🇮🇹"
+      },
+      es: {
+        hours: "⏰ Nuestro Horario:\n\n📅 Martes - Jueves: 5:00 PM - 9:00 PM\n📅 Viernes - Sábado: 5:00 PM - 10:00 PM\n📅 Domingo: 4:00 PM - 9:00 PM\n🚫 Cerrado los Lunes\n\n¡Hora Feliz: Martes-Viernes 5-6:30 PM (aperitivos a mitad de precio!)",
+        
+        location: "📍 Ubicación y Estacionamiento:\n\nEstamos ubicados en:\n456 Main Street\nDistrito del Centro\n\n🚗 Estacionamiento gratuito disponible en el lote detrás de nuestro edificio\n♿ Entrada accesible para sillas de ruedas en Main Street\n🚌 Las rutas de autobús 12, 15 y 20 paran justo enfrente\n\n¡Esperamos verte pronto!",
+        
+        directions: "🗺️ Direcciones:\n\nDesde la Autopista 95:\n• Toma la Salida 12\n• Gira a la izquierda en Main Street\n• Estamos a la derecha después de 3 cuadras, junto al Ayuntamiento\n\nDesde el Centro:\n• Dirígete al norte por Main Street\n• Estamos entre la Avenida 4 y 5\n\n¡Punto de referencia: Justo al lado del edificio histórico del Ayuntamiento con la torre del reloj!",
+        
+        reservation: "📅 ¡Me encantaría ayudarte a hacer una reservación!\n\nPermíteme recopilar información y te conectaré con nuestro personal para finalizar tu reserva. Te llamarán dentro de 15 minutos para confirmar.",
+        
+        thanks: "¡De nada! 😊\n\n¿Hay algo más en lo que pueda ayudarte hoy?\n\n• Preguntas sobre el menú\n• Horarios y ubicación\n• Hacer una reservación\n• Especiales de hoy",
+        
+        goodbye: "¡Gracias por chatear con Bella Cucina! 🍝\n\nEsperamos servirte pronto.\n\n¡Arrivederci! 🇮🇹"
+      }
+    };
+
+    function addBotMessage(text, delay = 800) {
+      setTimeout(() => {
+        messages.push({ type: 'bot', text });
+        renderMessages();
+      }, delay);
+    }
+
+    function addUserMessage(text) {
+      messages.push({ type: 'user', text });
+      renderMessages();
+    }
+
+    function detectLanguage(text) {
+      const spanishWords = ['hola', 'menú', 'horario', 'dónde', 'están', 'ubicación', 'reservación', 'gracias', 'especiales', 'vegano', 'vegetariano', 'quisiera', 'tienen', 'cuáles'];
+      const lowerText = text.toLowerCase();
+      const hasSpanish = spanishWords.some(word => lowerText.includes(word));
+      if (hasSpanish && language === 'en') {
+        language = 'es';
+        updateLanguageUI();
+      }
+      return language;
+    }
+
+    function handleReservationFlow(userMessage) {
+      if (!reservationData.partySize) {
+        reservationData.partySize = userMessage;
+        addBotMessage(language === 'en'
+          ? "Great! What date would you like to reserve? (We're open Tue-Sun)"
+          : "¡Excelente! ¿Qué fecha te gustaría reservar? (Estamos abiertos Mar-Dom)"
+        );
+        return true;
+      } else if (!reservationData.date) {
+        reservationData.date = userMessage;
+        addBotMessage(language === 'en'
+          ? "Perfect! What time would you prefer? (We're open 5pm-9pm weekdays, 5pm-10pm weekends)"
+          : "¡Perfecto! ¿Qué hora prefieres? (Estamos abiertos 5pm-9pm entre semana, 5pm-10pm fines de semana)"
+        );
+        return true;
+      } else if (!reservationData.time) {
+        reservationData.time = userMessage;
+        addBotMessage(language === 'en'
+          ? "Excellent! May I have your name?"
+          : "¡Excelente! ¿Me das tu nombre?"
+        );
+        return true;
+      } else if (!reservationData.name) {
+        reservationData.name = userMessage;
+        addBotMessage(language === 'en'
+          ? "And finally, your phone number so we can confirm your reservation?"
+          : "Y finalmente, ¿tu número de teléfono para confirmar tu reservación?"
+        );
+        return true;
+      } else if (!reservationData.phone) {
+        const phone = userMessage;
+        addBotMessage(language === 'en'
+          ? `🎉 Perfect! I've collected your information:\n\n👥 Party Size: ${reservationData.partySize}\n📅 Date: ${reservationData.date}\n🕐 Time: ${reservationData.time}\n👤 Name: ${reservationData.name}\n📞 Phone: ${phone}\n\nI'm now connecting you with our staff to finalize your reservation. Someone will contact you within 15 minutes to confirm. Thank you!`
+          : `🎉 ¡Perfecto! He recopilado tu información:\n\n👥 Personas: ${reservationData.partySize}\n📅 Fecha: ${reservationData.date}\n🕐 Hora: ${reservationData.time}\n👤 Nombre: ${reservationData.name}\n📞 Teléfono: ${phone}\n\n¡Ahora te estoy conectando con nuestro personal para finalizar tu reservación. Alguien te contactará en 15 minutos para confirmar. ¡Gracias!`
+        , 1200);
+        reservationData = {};
+        return true;
+      }
+      return false;
+    }
+
+    function handleEmailCapture(userMessage) {
+      const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+      if (emailRegex.test(userMessage)) {
+        emailCaptured = true;
+        addBotMessage(language === 'en'
+          ? "✅ Thank you! You've been added to our email list. You'll be the first to know about our exclusive specials and events!"
+          : "✅ ¡Gracias! Has sido agregado a nuestra lista de correo. ¡Serás el primero en saber sobre nuestros especiales exclusivos y eventos!"
+        );
+        return true;
+      }
+      return false;
+    }
+
+    function handleUserInput(userMessage) {
+      if (!userMessage.trim()) return;
+      
+      addUserMessage(userMessage);
+      const detectedLang = detectLanguage(userMessage);
+      const lower = userMessage.toLowerCase();
+
+      if (Object.keys(reservationData).length > 0) {
+        if (handleReservationFlow(userMessage)) return;
+      }
+
+      if (!emailCaptured && handleEmailCapture(userMessage)) return;
+
+      if (lower.includes('pasta') || lower.includes('espagueti') || lower.includes('fettuccine') || lower.includes('spaghetti') || lower.includes('ravioli')) {
+        addBotMessage(menuItems[detectedLang].pasta);
+      }
+      else if (lower.includes('seafood') || lower.includes('fish') || lower.includes('salmon') || lower.includes('shrimp') || lower.includes('mariscos') || lower.includes('pescado') || lower.includes('camarón')) {
+        addBotMessage(menuItems[detectedLang].seafood);
+      }
+      else if (lower.includes('vegan') || lower.includes('vegano')) {
+        addBotMessage(menuItems[detectedLang].vegan);
+      }
+      else if (lower.includes('gluten') || lower.includes('sin gluten') || lower.includes('celiac')) {
+        addBotMessage(menuItems[detectedLang].glutenFree);
+      }
+      else if (lower.includes('vegetarian') || lower.includes('vegetariano')) {
+        addBotMessage(menuItems[detectedLang].vegetarian);
+      }
+      else if (lower.includes('special') || lower.includes('especial') || lower.includes('today') || lower.includes('hoy')) {
+        addBotMessage(menuItems[detectedLang].specials);
+        setTimeout(() => {
+          if (!emailCaptured) {
+            addBotMessage(detectedLang === 'en'
+              ? "💌 Would you like to join our email list to receive weekly specials? Just share your email!"
+              : "💌 ¿Te gustaría unirte a nuestra lista de correo para recibir especiales semanales? ¡Solo comparte tu email!"
+            , 1000);
+          }
+        }, 1500);
+      }
+      else if (lower.includes('hour') || lower.includes('open') || lower.includes('close') || lower.includes('horario') || lower.includes('abierto') || lower.includes('cerrado')) {
+        addBotMessage(responses[detectedLang].hours);
+      }
+      else if (lower.includes('where') || lower.includes('location') || lower.includes('address') || lower.includes('parking') || lower.includes('dónde') || lower.includes('ubicación') || lower.includes('dirección') || lower.includes('estacionamiento')) {
+        addBotMessage(responses[detectedLang].location);
+        if (lower.includes('direction') || lower.includes('how to get') || lower.includes('cómo llegar')) {
+          addBotMessage(responses[detectedLang].directions, 1200);
+        }
+      }
+      else if (lower.includes('reservation') || lower.includes('reserve') || lower.includes('book') || lower.includes('table') || lower.includes('reservación') || lower.includes('reservar') || lower.includes('mesa')) {
+        addBotMessage(responses[detectedLang].reservation);
+        setTimeout(() => {
+          addBotMessage(detectedLang === 'en'
+            ? "How many people will be dining with us?"
+            : "¿Cuántas personas cenarán con nosotros?"
+          , 800);
+        }, 1000);
+      }
+      else if (lower.includes('menu') || lower.includes('food') || lower.includes('dish') || lower.includes('eat') || lower.includes('menú') || lower.includes('comida') || lower.includes('plato')) {
+        addBotMessage(detectedLang === 'en'
+          ? "🍽️ I can help you with our menu! We specialize in:\n\n• Pasta dishes\n• Fresh seafood\n• Vegan options\n• Gluten-free items\n• Vegetarian selections\n• Daily specials\n\nWhat would you like to know more about?"
+          : "🍽️ ¡Puedo ayudarte con nuestro menú! Nos especializamos en:\n\n• Platos de pasta\n• Mariscos frescos\n• Opciones veganas\n• Opciones sin gluten\n• Selecciones vegetarianas\n• Especiales del día\n\n¿Sobre qué te gustaría saber más?"
+        );
+      }
+      else if (lower.includes('thank') || lower.includes('gracias') || lower.includes('thanks')) {
+        addBotMessage(responses[detectedLang].thanks);
+      }
+      else if (lower.includes('bye') || lower.includes('goodbye') || lower.includes('adiós') || lower.includes('adios')) {
+        addBotMessage(responses[detectedLang].goodbye);
+      }
+      else {
+        addBotMessage(detectedLang === 'en'
+          ? "I can help you with:\n\n• Menu questions (pasta, seafood, dietary needs)\n• Our hours and location\n• Making a reservation\n• Today's specials\n\nWhat would you like to know?"
+          : "Puedo ayudarte con:\n\n• Preguntas sobre el menú (pasta, mariscos, necesidades dietéticas)\n• Nuestros horarios y ubicación\n• Hacer una reservación\n• Especiales de hoy\n\n¿Qué te gustaría saber?"
+        );
+      }
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('messagesContainer');
+      if (!container) return;
+      
+      container.innerHTML = messages.map(msg => `
+        <div class="message ${msg.type}">
+          <div class="message-bubble">${msg.text}</div>
+        </div>
+      `).join('');
+      
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function updateLanguageUI() {
+      const headerText = document.getElementById('chatHeaderText');
+      if (headerText) {
+        headerText.textContent = language === 'en' ? 'How can we help?' : '¿Cómo podemos ayudarte?';
+      }
+      const inputEl = document.getElementById('chatInput');
+      if (inputEl) {
+        inputEl.placeholder = language === 'en' ? 'Type your message...' : 'Escribe tu mensaje...';
+      }
+    }
+
+    function toggleLanguage() {
+      language = language === 'en' ? 'es' : 'en';
+      messages = [];
+      updateLanguageUI();
+      renderChatWindow();
+      initChat();
+    }
+
+    function openChat() {
+      isOpen = true;
+      renderChatWindow();
+      initChat();
+    }
+
+    function closeChat() {
+      isOpen = false;
+      document.getElementById('chatbot').innerHTML = `
+        <button class="chat-button" id="openChat" aria-label="Open chat">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      `;
+      document.getElementById('openChat').addEventListener('click', openChat);
+    }
+
+    function initChat() {
+      if (messages.length === 0) {
+        addBotMessage(language === 'en' 
+          ? "👋 Welcome to Bella Cucina! I'm here to help you with our menu, hours, and reservations. How can I assist you today?"
+          : "👋 ¡Bienvenido a Bella Cucina! Estoy aquí para ayudarte con nuestro menú, horarios y reservaciones. ¿Cómo puedo asistirte hoy?"
+        );
+      }
+    }
+
+    function renderChatWindow() {
+      document.getElementById('chatbot').innerHTML = `
+        <div class="chat-window">
+          <div class="chat-header">
+            <div>
+              <h3>🍝 Bella Cucina</h3>
+              <p id="chatHeaderText">${language === 'en' ? 'How can we help?' : '¿Cómo podemos ayudarte?'}</p>
+            </div>
+            <div class="header-controls">
+              <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </button>
+              <button class="close-btn" id="closeChat" aria-label="Close chat">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="messages-container" id="messagesContainer"></div>
+          <div class="input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="${language === 'en' ? 'Type your message...' : 'Escribe tu mensaje...'}" />
+            <button class="send-btn" id="sendBtn" aria-label="Send message">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      renderMessages();
+
+      document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+      document.getElementById('closeChat').addEventListener('click', closeChat);
+      document.getElementById('sendBtn').addEventListener('click', () => {
+        const input = document.getElementById('chatInput');
+        handleUserInput(input.value);
+        input.value = '';
+      });
+      document.getElementById('chatInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const input = document.getElementById('chatInput');
+          handleUserInput(input.value);
+          input.value = '';
+        }
+      });
+    }
+
+    document.getElementById('openChat').addEventListener('click', openChat);
+  </script>
+</body>
+</html>
